@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functional Table</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .table-container {
+            margin: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #8a8a8a;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #ddd;
+            cursor: pointer;
+        }
+
+        .info-display {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #080808;
+            background-color: #f9f9f9;
+            display: none; 
+        }
+
+        @media screen and (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                display: none;
+            }
+
+            tbody tr {
+                margin-bottom: 10px;
+            }
+
+            tbody td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            tbody td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 15px;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <center>
+            <input type="text" id="tableSearch" placeholder="Search...">
+        </center>
+        <table id="myTable" data-sort-order="asc">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Name</th>
+                    <th onclick="sortTable(1)">Age</th>
+                    <th onclick="sortTable(2)">Country</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="displayInfo(this)" data-info="Rushikesh Mohite is a software developer who loves coding and playing soccer.">
+                    <td data-label="Name">Rushikesh Mohite</td>
+                    <td data-label="Age">23</td>
+                    <td data-label="Country">Indapur</td>
+                </tr>
+                <tr onclick="displayInfo(this)" data-info="Puroshattam Gaikwad enjoys hiking and photography.">
+                    <td data-label="Name">Puroshattam Gaikwad</td>
+                    <td data-label="Age">22</td>
+                    <td data-label="Country">Pandare</td>
+                </tr>
+                <tr onclick="displayInfo(this)" data-info="Shashank Jagtap is passionate about cooking and traveling.">
+                    <td data-label="Name">Shashank Jagtap</td>
+                    <td data-label="Age">23</td>
+                    <td data-label="Country">Pandare</td>
+                </tr>
+                <tr onclick="displayInfo(this)" data-info="Amod Mahapati is an avid reader and history buff.">
+                    <td data-label="Name">Amod Mahapati</td>
+                    <td data-label="Age">25</td>
+                    <td data-label="Country">Rui</td>
+                </tr>
+                <tr onclick="displayInfo(this)" data-info="Nikhil Shinde enjoys programming and video games.">
+                    <td data-label="Name">Nikhil Shinde</td>
+                    <td data-label="Age">22</td>
+                    <td data-label="Country">Phaltan</td>
+                </tr>
+                <tr onclick="displayInfo(this)" data-info="Suraj Kakade loves playing chess and solving puzzles.">
+                    <td data-label="Name">Suraj Kakade</td>
+                    <td data-label="Age">24</td>
+                    <td data-label="Country">Baramati</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+    <div id="infoDisplay" class="info-display">
+        <!-- Info will be displayed here -->
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('tableSearch').addEventListener('keyup', function () {
+                var searchValue = this.value.toLowerCase();
+                var table = document.getElementById('myTable');
+                var tr = table.getElementsByTagName('tr');
+
+                for (var i = 1; i < tr.length; i++) {
+                    var td = tr[i].getElementsByTagName('td');
+                    var rowText = '';
+                    for (var j = 0; j < td.length; j++) {
+                        var cell = td[j];
+                        if (cell) {
+                            rowText += cell.textContent.toLowerCase() + ' ';
+                        }
+                    }
+                    tr[i].style.display = rowText.indexOf(searchValue) > -1 ? '' : 'none';
+                }
+            });
+        });
+
+        function displayInfo(row) {
+            var infoDisplay = document.getElementById('infoDisplay');
+            var userInfo = row.getAttribute('data-info');
+            infoDisplay.innerHTML = userInfo;
+            infoDisplay.style.display = 'block';
+        }
+
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            dir = "asc"; 
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount ++; 
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
